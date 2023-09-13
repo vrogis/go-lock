@@ -7,6 +7,10 @@ import (
 )
 
 func Lock(lockers ...sync.Locker) (unlock func()) {
+	return Acquire(lockers...)
+}
+
+func Acquire[Locker sync.Locker](lockers ...Locker) (release func()) {
 	count := len(lockers)
 
 	if 0 == count {
@@ -28,6 +32,6 @@ func Lock(lockers ...sync.Locker) (unlock func()) {
 	}
 }
 
-func lockerToPtr(locker *sync.Locker) uintptr {
+func lockerToPtr[Locker sync.Locker](locker *Locker) uintptr {
 	return (*struct{ uintptr, value uintptr })(unsafe.Pointer(locker)).value
 }
